@@ -1,5 +1,1 @@
-# elige 22 (o 20 si es lo que usás localmente)
-echo "22" > .nvmrc
-git add .nvmrc
-git commit -m "fix: pin Node 22 for Netlify"
-git push
+22
