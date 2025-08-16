@@ -187,13 +187,15 @@ const Formulario = () => {
               </div>
 
               {/* Ratings (IMDb/Rotten/Metacritic/Total) */}
-              <RatingGrid
-                imdb={resultado.omdb?.imdbRating}
-                metascore={resultado.omdb?.Metascore}
-                ratings={resultado.omdb?.Ratings}
-                size="sm"
-                className="mt-1"
-              />
+              <div className="mx-auto">
+                <RatingGrid
+                  imdb={resultado.omdb?.imdbRating}
+                  metascore={resultado.omdb?.Metascore}
+                  ratings={resultado.omdb?.Ratings}
+                  size="sm"
+                  className="mt-1"
+                />
+              </div>
             </div>
 
             {/* Botón */}

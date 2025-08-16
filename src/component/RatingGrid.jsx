@@ -72,24 +72,24 @@ export default function RatingGrid({
           valueTotal: "text-lg",
           gap: "gap-3",
           cell: "py-1",
-          logo: "h-8",
+          logo: "h-7",
         }
       : {
           valueSub: "text-xs",
           valueTotal: "text-sm",
           gap: "gap-2",
           cell: "py-0.5",
-          logo: "h-8",
+          logo: "h-7",
         };
 
   const badge = (label) => (
-    <span className="inline-flex items-center justify-center font-semibold rounded px-2 py-1 bg-purple-50 text-purple-700 border border-purple-200">
+    <span className="inline-flex items-center justify-center font-semibold rounded px-2 py-1 bg-purple-50 text-purple-700 border border-purple-200 ">
       {label}
     </span>
   );
 
   return (
-    <div className={`w-full ${className}`}>
+    <div className={`w-full ${className} `}>
       <div className="inline-grid grid-cols-[repeat(4,max-content)] justify-center items-center gap-x-2 md:gap-x-3 gap-y-1 text-center">
         {/* Fila 1: logos */}
         <div className={`${sizes.cell} flex justify-center`}>
