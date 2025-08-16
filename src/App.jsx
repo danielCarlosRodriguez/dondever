@@ -8,7 +8,9 @@ function App() {
     <>
       <div className="container">
         {" "}
-        <h1 className="my-3" >¿Dónde ver?</h1>
+        <h1 className="text-3xl font-bold underline mb-3 mt-2 text-center">
+          ¿Dónde ver?
+        </h1>
         <Formulario />
       </div>
     </>
