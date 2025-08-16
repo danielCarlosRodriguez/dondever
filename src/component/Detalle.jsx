@@ -13,16 +13,20 @@ const Detalle = ({ item, onBack }) => {
   const [err, setErr] = useState(null);
 
   // Helpers: proveedor por item y enriquecimiento de listas
-  const getProviderLogo = async (id, typeStr) => {
-    try {
-      const { data } = await axios.get(
-        `https://api.themoviedb.org/3/${typeStr}/${id}/watch/providers?api_key=${API_KEY}`
-      );
-      return data?.results?.AR?.flatrate?.[0]?.logo_path ?? null;
-    } catch {
-      return null;
-    }
-  };
+ const getProviderLogo = async (id, typeStr) => {
+   try {
+     const { data } = await axios.get(
+       `https://api.themoviedb.org/3/${typeStr}/${id}/watch/providers?api_key=${API_KEY}`
+     );
+     const r = data?.results ?? {};
+     return (
+       r.UY?.flatrate?.[0]?.logo_path ?? r.AR?.flatrate?.[0]?.logo_path ?? null
+     );
+   } catch {
+     return null;
+   }
+ };
+
 
   const enrichWithProviders = async (itemsArr, typeStr) => {
     return Promise.all(

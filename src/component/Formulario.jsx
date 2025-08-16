@@ -22,8 +22,11 @@ const [seleccionado, setSeleccionado] = useState(null);
         `https://api.themoviedb.org/3/${tipo}/${item.id}/watch/providers?api_key=${API_KEY}`
       );
 
+      const r = response.data.results ?? {};
       const proveedor =
-        response.data.results.AR?.flatrate?.[0]?.logo_path ?? null;
+        r.UY?.flatrate?.[0]?.logo_path ??
+        r.AR?.flatrate?.[0]?.logo_path ??
+        null;
 
       //console.log(response.data.results);
       
