@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
+import RatingGrid from "./RatingGrid";
+
 
 const Detalle = ({ item, onBack }) => {
   const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -100,11 +102,32 @@ const Detalle = ({ item, onBack }) => {
 
   return (
     <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-lg p-6 mt-10">
+     
+
       <button
         onClick={onBack}
-        className="mb-6 text-purple-600 hover:underline font-medium"
+        className="relative mb-6 text-purple-700 font-medium hover:text-purple-800 focus:outline-none"
+        aria-label="Volver"
+        title="Volver"
       >
-        ⬅ Volver
+        <span className="inline-flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <path
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          Volver
+        </span>
+        <span className="block h-[2px] w-0 bg-purple-700 transition-all duration-200 group-hover:w-full"></span>
       </button>
 
       {/* Encabezado */}
@@ -131,15 +154,7 @@ const Detalle = ({ item, onBack }) => {
             <p>
               <strong>Fecha:</strong> {date}
             </p>
-            <p>
-              <strong>Idioma:</strong> {item.original_language?.toUpperCase()}
-            </p>
-            <p>
-              <strong>IMDb:</strong>{" "}
-              {typeof item.vote_average === "number"
-                ? `⭐ ${item.vote_average.toFixed(1)}`
-                : "N/A"}
-            </p>
+
             <p>
               <strong>Tipo:</strong> {item.media_type}
             </p>
@@ -161,6 +176,16 @@ const Detalle = ({ item, onBack }) => {
               />
             </div>
           )}
+
+          {/* RatingGrid (IMDb / Rotten / Metascore / Total) */}
+          <div className="mt-4">
+            <RatingGrid
+              imdb={item.omdb?.imdbRating}
+              metascore={item.omdb?.Metascore}
+              ratings={item.omdb?.Ratings} // desde OMDb toma Rotten automáticamente
+              size="md"
+            />
+          </div>
         </div>
       </div>
 
