@@ -1,8 +1,7 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import RatingGrid from "./RatingGrid";
-
 
 const Detalle = ({ item, onBack }) => {
   const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -14,30 +13,37 @@ const Detalle = ({ item, onBack }) => {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState(null);
 
-  // Helpers: proveedor por item y enriquecimiento de listas
- const getProviderLogo = async (id, typeStr) => {
-   try {
-     const { data } = await axios.get(
-       `https://api.themoviedb.org/3/${typeStr}/${id}/watch/providers?api_key=${API_KEY}`
-     );
-     const r = data?.results ?? {};
-     return (
-       r.UY?.flatrate?.[0]?.logo_path ?? r.AR?.flatrate?.[0]?.logo_path ?? null
-     );
-   } catch {
-     return null;
-   }
- };
+  // ✅ Helpers estables (useCallback) para no romper exhaustiveness
+  const getProviderLogo = useCallback(
+    async (id, typeStr) => {
+      try {
+        const { data } = await axios.get(
+          `https://api.themoviedb.org/3/${typeStr}/${id}/watch/providers?api_key=${API_KEY}`
+        );
+        const r = data?.results ?? {};
+        return (
+          r.UY?.flatrate?.[0]?.logo_path ??
+          r.AR?.flatrate?.[0]?.logo_path ??
+          null
+        );
+      } catch {
+        return null;
+      }
+    },
+    [API_KEY]
+  );
 
-
-  const enrichWithProviders = async (itemsArr, typeStr) => {
-    return Promise.all(
-      itemsArr.map(async (it) => {
-        const proveedor = await getProviderLogo(it.id, typeStr);
-        return { ...it, proveedor };
-      })
-    );
-  };
+  const enrichWithProviders = useCallback(
+    async (itemsArr, typeStr) => {
+      return Promise.all(
+        itemsArr.map(async (it) => {
+          const proveedor = await getProviderLogo(it.id, typeStr);
+          return { ...it, proveedor };
+        })
+      );
+    },
+    [getProviderLogo]
+  );
 
   useEffect(() => {
     let active = true;
@@ -60,7 +66,6 @@ const Detalle = ({ item, onBack }) => {
 
         if (!active) return;
 
-        // Top 8 actores
         const topCast = (creditsRes.data?.cast ?? [])
           .sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
           .slice(0, 8);
@@ -68,7 +73,6 @@ const Detalle = ({ item, onBack }) => {
         const rawSimilar = (similarRes.data?.results ?? []).slice(0, 12);
         const rawRecs = (recsRes.data?.results ?? []).slice(0, 12);
 
-        // Enriquecer Similares y Recomendadas con proveedor
         const [simWithProv, recsWithProv] = await Promise.all([
           enrichWithProviders(rawSimilar, type),
           enrichWithProviders(rawRecs, type),
@@ -95,18 +99,16 @@ const Detalle = ({ item, onBack }) => {
     return () => {
       active = false;
     };
-  }, [item?.id, type, API_KEY]);
+  }, [item?.id, type, API_KEY, enrichWithProviders]); // ✅ incluye enrichWithProviders
 
   const title = item.title || item.name;
   const date = item.release_date || item.first_air_date || "N/A";
 
   return (
     <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-lg p-6 mt-10">
-     
-
       <button
         onClick={onBack}
-        className="relative mb-6 text-purple-700 font-medium hover:text-purple-800 focus:outline-none"
+        className="group relative mb-6 text-purple-700 font-medium hover:text-purple-800 focus:outline-none"
         aria-label="Volver"
         title="Volver"
       >
@@ -154,7 +156,6 @@ const Detalle = ({ item, onBack }) => {
             <p>
               <strong>Fecha:</strong> {date}
             </p>
-
             <p>
               <strong>Tipo:</strong> {item.media_type}
             </p>
@@ -177,12 +178,13 @@ const Detalle = ({ item, onBack }) => {
             </div>
           )}
 
-          {/* RatingGrid (IMDb / Rotten / Metascore / Total) */}
+          {/* RatingGrid (IMDb / Rotten / Metascore / TMDb / Total) */}
           <div className="mt-4">
             <RatingGrid
               imdb={item.omdb?.imdbRating}
               metascore={item.omdb?.Metascore}
-              ratings={item.omdb?.Ratings} // desde OMDb toma Rotten automáticamente
+              ratings={item.omdb?.Ratings}
+              tmdb={item.vote_average}
               size="md"
             />
           </div>
@@ -530,6 +532,17 @@ Detalle.propTypes = {
     overview: PropTypes.string,
     proveedor: PropTypes.string,
     tagline: PropTypes.string,
+    // ✅ agrega validación del bloque OMDb
+    omdb: PropTypes.shape({
+      imdbRating: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      Metascore: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      Ratings: PropTypes.arrayOf(
+        PropTypes.shape({
+          Source: PropTypes.string,
+          Value: PropTypes.string,
+        })
+      ),
+    }),
   }).isRequired,
   onBack: PropTypes.func.isRequired,
 };

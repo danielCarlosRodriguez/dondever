@@ -15,7 +15,7 @@ function App() {
 
         <Formulario />
 
-        <footer className="mt-10 border-t pt-4 text-sm text-gray-600 mx-5">
+        <footer className="mt-10 border-t pt-4 text-sm text-gray-600 ">
           <div className="flex items-center justify-between ">
             <span>dondever v2</span>
             <span>By elBoli</span>

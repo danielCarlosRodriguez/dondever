@@ -87,6 +87,8 @@ const FormularioOmdb = () => {
 
         if (cancelled) return;
         setResultados(detalles);
+        console.log(detalles);
+        
       } catch (e) {
         if (cancelled) return;
         console.error(e);
