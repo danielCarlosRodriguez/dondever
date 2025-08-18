@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Donde Ver</string>
+    <string name="title_activity_main">Donde Ver</string>
+    <string name="package_name">com.dondever.app</string>
+    <string name="custom_url_scheme">com.dondever.app</string>
+</resources>

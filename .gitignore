@@ -25,3 +25,14 @@ dist-ssr
 .env
 borrador
 borrador/logo donde ver.ai
+
+# Android / Capacitor
+android/.gradle/
+android/local.properties
+android/**/build/
+android/captures/
+android/.idea/
+android/**/*.iml
+android/app/build/outputs/
+*.keystore
+*.jks
